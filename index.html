@@ -1,102 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Key Generated | Unknown Modz</title>
-    
-    <link rel="stylesheet" href="style.css">
-    <style>
-        :root { --bg: #000000; --card: #121212; --text: #ffffff; --accent: #00ff88; }
-        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { width: 90%; max-width: 400px; text-align: center; }
-        
-        .key-icon { background: #1a1a1a; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; border: 1px solid #333; font-size: 24px; }
-        h1 { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
-        .subtitle { color: #888; font-size: 14px; margin-bottom: 30px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Generated | Unknown Modz</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root { --bg: #000000; --card: #121212; --text: #ffffff; --accent: #00ff88; }
+        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { width: 90%; max-width: 400px; text-align: center; }
+        
+        .key-icon { background: #1a1a1a; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; border: 1px solid #333; font-size: 24px; }
+        h1 { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .subtitle { color: #888; font-size: 14px; margin-bottom: 30px; }
 
-        /* Success Card */
-        .card { background: var(--card); border: 1px solid #222; border-radius: 24px; padding: 30px; text-align: center; box-shadow: 0 0 20px rgba(0,255,136,0.05); }
-        h2 { font-size: 20px; margin-bottom: 15px; color: var(--accent); }
-        .card-p { color: #888; font-size: 14px; margin-bottom: 25px; }
+        /* Success Card */
+        .card { background: var(--card); border: 1px solid #222; border-radius: 24px; padding: 30px; text-align: center; box-shadow: 0 0 20px rgba(0,255,136,0.05); }
+        h2 { font-size: 20px; margin-bottom: 15px; color: var(--accent); }
+        .card-p { color: #888; font-size: 14px; margin-bottom: 25px; }
 
-        /* Key Display Box */
-        .key-box { background: #000; padding: 20px; border-radius: 16px; border: 1px dashed var(--accent); margin-bottom: 25px; position: relative; overflow: hidden; }
-        #finalKey { color: var(--accent); font-family: 'Courier New', monospace; font-size: 18px; font-weight: bold; letter-spacing: 1px; }
-        
-        /* Copy Button */
-        .btn { width: 100%; padding: 16px; background: #ffffff; color: #000; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn:hover { transform: translateY(-2px); background: var(--accent); }
+        /* Key Display Box */
+        .key-box { background: #000; padding: 20px; border-radius: 16px; border: 1px dashed var(--accent); margin-bottom: 25px; position: relative; overflow: hidden; }
+        #finalKey { color: var(--accent); font-family: 'Courier New', monospace; font-size: 18px; font-weight: bold; letter-spacing: 1px; }
+        
+        /* Copy Button */
+        .btn { width: 100%; padding: 16px; background: #ffffff; color: #000; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { transform: translateY(-2px); background: var(--accent); }
 
-        .footer { margin-top: 25px; color: #333; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
-    </style>
+        .footer { margin-top: 25px; color: #333; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+    </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="key-icon">
-    <img src="./assets/logo.png" alt="UKM LOGO" style="width: 100%; height: 100%; border-radius: 50%;">
+    <div class="key-icon">
+    <img src="./assets/logo.png" alt="UKM LOGO" style="width: 100%; height: 100%; border-radius: 50%;">
 </div>
-        <img src="./assets/logo.png" alt="UKM LOGO">
-    </div>
+    <h1>Access Unlocked</h1>
+    <p class="subtitle">Your 24-hour license key is ready to use.</p>
 
-    <h1>Access Unlocked</h1>
-    <p class="subtitle">Your 24-hour license key is ready to use.</p>
+    <div class="card">
+        <h2>Generation Success!</h2>
+        <p class="card-p">Copy the key below and paste it into the Unknown Modz login dialog to continue.</p>
 
-    <div class="card">
-    <div class="card" style="text-align: center;">
-        <h2>Generation Success!</h2>
-        <p class="card-p">Copy the key below and paste it into the Unknown Modz login dialog to continue.</p>
+        <div class="key-box">
+            <span id="finalKey">WAITING...</span>
+        </div>
 
-        <div class="key-box">
-            <span id="finalKey">WAITING...</span>
-        </div>
+        <button class="btn" id="copyBtn" onclick="copyKey()">
+            COPY TO CLIPBOARD
+        </button>
+    </div>
 
-        <button class="btn" id="copyBtn" onclick="copyKey()">
-            COPY TO CLIPBOARD
-        </button>
-    </div>
-
-    <div class="footer">UNKNOWN MODZ SECURITY SYSTEM</div>
+    <div class="footer">UNKNOWN MODZ SECURITY SYSTEM</div>
 </div>
 
 <script>
-    window.onload = function() {
-        // --- AUTO KEY LOGIC (Synced with App) ---
-        // Maharaj, ye logic aur aapke Java App ka logic 100% same hona chahiye
-        const day = Math.floor(Date.now() / 86400000);
-        let seed = 2026 + day; // 2026 is our Secret Global Seed
-        let seed = 2026 + day; 
+    window.onload = function() {
+        // --- AUTO KEY LOGIC (Synced with App) ---
+        // Maharaj, ye logic aur aapke Java App ka logic 100% same hona chahiye
+        const day = Math.floor(Date.now() / 86400000);
+        let seed = 2026 + day; // 2026 is our Secret Global Seed
+        
+        function rnd() { 
+            var x = Math.sin(seed++) * 10000; 
+            return Math.abs(x - Math.floor(x)); 
+        }
+        
+        let segments = [];
+        for(let i=0; i<4; i++) {
+            let s = "";
+            for(let j=0; j<4; j++) s += Math.floor(rnd() * 10);
+            segments.push(s);
+        }
 
-        function rnd() { 
-            var x = Math.sin(seed++) * 10000; 
-            return Math.abs(x - Math.floor(x)); 
-        }
+        const generatedKey = "UKM-" + segments.join("-");
+        document.getElementById('finalKey').innerText = generatedKey;
+    };
 
-        let segments = [];
-        for(let i=0; i<4; i++) {
-            let s = "";
-            for(let j=0; j<4; j++) s += Math.floor(rnd() * 10);
-            segments.push(s);
-        }
-
-        const generatedKey = "UKM-" + segments.join("-");
-        document.getElementById('finalKey').innerText = generatedKey;
-    };
-
-    function copyKey() {
-        const keyText = document.getElementById('finalKey').innerText;
-        navigator.clipboard.writeText(keyText).then(() => {
-            const btn = document.getElementById('copyBtn');
-            btn.innerText = "COPIED SUCCESSFULLY! ✅";
-            btn.style.background = "#00ff88";
-            setTimeout(() => { 
-                btn.innerText = "COPY TO CLIPBOARD"; 
-                btn.style.background = "#ffffff";
-            }, 2000);
-        });
-    }
+    function copyKey() {
+        const keyText = document.getElementById('finalKey').innerText;
+        navigator.clipboard.writeText(keyText).then(() => {
+            const btn = document.getElementById('copyBtn');
+            btn.innerText = "COPIED SUCCESSFULLY! ✅";
+            btn.style.background = "#00ff88";
+            setTimeout(() => { 
+                btn.innerText = "COPY TO CLIPBOARD"; 
+                btn.style.background = "#ffffff";
+            }, 2000);
+        });
+    }
 </script>
 
 </body>
-</html>
+</html> 
