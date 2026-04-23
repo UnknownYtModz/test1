@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unknown Modz | Secure Key System</title>
+    <style>
+        :root { --accent: #00ff88; --bg: #0a0a0a; --card: #111111; }
+        body { background-color: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid #222; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: var(--accent); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        .status { color: #888; font-size: 12px; margin-bottom: 20px; }
+        
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; text-align: center; font-size: 16px; outline: none; box-sizing: border-box; }
+        input:focus { border-color: var(--accent); }
+        
+        button { width: 100%; padding: 12px; background: var(--accent); color: black; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        button:hover { background: #00cc6a; transform: scale(1.02); }
+
+        #result { background: #000; padding: 15px; border-radius: 10px; border: 1px dashed var(--accent); margin-top: 20px; display: none; }
+        .key-text { font-family: 'Courier New', Courier, monospace; color: var(--accent); font-size: 18px; font-weight: bold; display: block; margin: 10px 0; word-break: break-all; }
+        
+        .error-box { background: rgba(255, 0, 0, 0.1); border: 1px solid #ff4444; padding: 15px; border-radius: 10px; display: none; margin-bottom: 20px; color: #ff4444; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Unknown Modz</h1>
+        
+        <div id="errorArea" class="error-box">
+            <strong>ACCESS DENIED!</strong><br>
+            <small>Please bypass the linkvertise/shortener first.</small>
+            <button onclick="location.href='https://lootdest.org/s?yh8OnyLN'" style="margin-top:10px; background:#444; color:white;">Go to Link</button>
+        </div>
+
+        <div id="formArea" style="display: none;">
+            <p class="status">Enter your Device ID from the App</p>
+            <input type="text" id="deviceIdInput" placeholder="Enter Device ID (Digits Only)">
+            <button onclick="generateKey()">Get My 24H Key</button>
+        </div>
+
+        <div id="result">
+            <small style="color:#666;">YOUR KEY (VALID FOR 24H):</small>
+            <span id="keyDisplay" class="key-text"></span>
+            <button onclick="copyKey()" id="copyBtn" style="background:#222; color:var(--accent); border:1px solid var(--accent);">Copy Key</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Security Check ---
+        const REQUIRED_REF = "lootdest.org"; // Aapka shortener domain
+        const currentRef = document.referrer;
+
+        window.onload = function() {
+            // Debug mode ke liye ?debug=true use kar sakte ho
+            if (currentRef.includes(REQUIRED_REF) || window.location.search.includes("debug=true")) {
+                document.getElementById('formArea').style.display = "block";
+            } else {
+                document.getElementById('errorArea').style.display = "block";
+            }
+        };
+
+        function generateKey() {
+            const uid = document.getElementById('deviceIdInput').value.replace(/\D/g,'');
+            if (uid.length < 4) return alert("Invalid ID Maharaj!");
+
+            // Mathematical Logic (Java App se Match karne ke liye)
+            const day = Math.floor(Date.now() / 86400000);
+            let seed = parseInt(uid) + day;
+            
+            function rnd() { 
+                var x = Math.sin(seed++) * 10000; 
+                return Math.abs(x - Math.floor(x)); 
+            }
+            
+            let res = [];
+            for(let i=0; i<4; i++) {
+                let s = "";
+                for(let j=0; j<4; j++) s += Math.floor(rnd() * 10);
+                res.push(s);
+            }
+
+            const finalKey = "Unknown-Modz-" + res.join("-");
+            document.getElementById('keyDisplay').innerText = finalKey;
+            document.getElementById('result').style.display = "block";
+            document.getElementById('formArea').style.display = "none";
+        }
+
+        function copyKey() {
+            const keyText = document.getElementById('keyDisplay').innerText;
+            navigator.clipboard.writeText(keyText);
+            document.getElementById('copyBtn').innerText = "COPIED! ✅";
+            setTimeout(() => { document.getElementById('copyBtn').innerText = "Copy Key"; }, 2000);
+        }
+    </script>
+</body>
+</html>
