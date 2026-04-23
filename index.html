@@ -151,12 +151,20 @@
             const data = await response.json();
             const ip = data.ip;
 
-            // 2. Logic: IP + Current Day + Secret Seed
+            // 2. DEVICE ID LOGIC (LocalStorage)
+            let deviceUID = localStorage.getItem('ukm_device_id');
+            if (!deviceUID) {
+                // Agar ID nahi hai toh nayi random ID banao aur save karo
+                deviceUID = Math.floor(Math.random() * 999999) + 100000;
+                localStorage.setItem('ukm_device_id', deviceUID);
+            }
+
+            // 3. Logic: IP + Unique Device ID + Day + Secret Seed
             const day = Math.floor(Date.now() / 86400000);
-            
-            // IP ke dot hatakar number banana
             const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
-            let seed = ipSeed + day + 2026; 
+            
+            // Seed mein Device ID add kar diya (Ab ye har phone pe alag hoga)
+            let seed = ipSeed + day + 2026 + parseInt(deviceUID); 
             
             function rnd() { 
                 var x = Math.sin(seed++) * 10000; 
@@ -174,8 +182,6 @@
             document.getElementById('finalKey').innerText = generatedKey;
 
         } catch (err) {
-            // Agar internet slow ho toh normal seed use karega fallback ke liye
-            const day = Math.floor(Date.now() / 86400000);
             document.getElementById('finalKey').innerText = "CONNECT TO INTERNET";
         }
     }
@@ -197,6 +203,5 @@
         });
     }
 </script>
-
 </body>
 </html>
