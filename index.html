@@ -3,91 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unknown Modz | Key Gen</title>
+    <title>Key Generated | Unknown Modz</title>
     <style>
-        :root { --accent: #00ff88; --bg: #0a0a0a; --card: #111111; }
-        body { background-color: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid #222; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { color: var(--accent); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
-        .status { color: #888; font-size: 13px; margin-bottom: 20px; }
+        :root { --bg: #000000; --card: #121212; --text: #ffffff; --accent: #00ff88; }
+        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { width: 90%; max-width: 400px; text-align: center; }
         
-        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; text-align: center; font-size: 16px; outline: none; box-sizing: border-box; }
-        input:focus { border-color: var(--accent); }
-        
-        button { width: 100%; padding: 12px; background: var(--accent); color: black; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        button:hover { background: #00cc6a; transform: scale(1.02); }
+        .key-icon { background: #1a1a1a; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; border: 1px solid #333; font-size: 24px; }
+        h1 { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .subtitle { color: #888; font-size: 14px; margin-bottom: 30px; }
 
-        #result { background: #000; padding: 15px; border-radius: 10px; border: 1px dashed var(--accent); margin-top: 20px; display: none; }
-        .key-text { font-family: 'Courier New', monospace; color: var(--accent); font-size: 18px; font-weight: bold; display: block; margin: 10px 0; word-break: break-all; }
+        /* Success Card */
+        .card { background: var(--card); border: 1px solid #222; border-radius: 24px; padding: 30px; text-align: center; box-shadow: 0 0 20px rgba(0,255,136,0.05); }
+        h2 { font-size: 20px; margin-bottom: 15px; color: var(--accent); }
+        .card-p { color: #888; font-size: 14px; margin-bottom: 25px; }
+
+        /* Key Display Box */
+        .key-box { background: #000; padding: 20px; border-radius: 16px; border: 1px dashed var(--accent); margin-bottom: 25px; position: relative; overflow: hidden; }
+        #finalKey { color: var(--accent); font-family: 'Courier New', monospace; font-size: 18px; font-weight: bold; letter-spacing: 1px; }
         
-        /* Error box ko hide kar diya hai permanent abhi ke liye */
-        .error-box { display: none !important; }
+        /* Copy Button */
+        .btn { width: 100%; padding: 16px; background: #ffffff; color: #000; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { transform: translateY(-2px); background: var(--accent); }
+
+        .footer { margin-top: 25px; color: #333; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Unknown Modz</h1>
-        
-        <div id="formArea">
-            <p class="status">Enter Device ID to Generate Key</p>
-            <input type="text" id="deviceIdInput" placeholder="Enter Device ID (Digits Only)">
-            <button onclick="generateKey()">Get My 24H Key</button>
+<div class="container">
+    <div class="key-icon">🎁</div>
+    <h1>Access Unlocked</h1>
+    <p class="subtitle">Your 24-hour license key is ready to use.</p>
+
+    <div class="card">
+        <h2>Generation Success!</h2>
+        <p class="card-p">Copy the key below and paste it into the Unknown Modz login dialog to continue.</p>
+
+        <div class="key-box">
+            <span id="finalKey">WAITING...</span>
         </div>
 
-        <div id="result">
-            <small style="color:#666;">YOUR 24H KEY:</small>
-            <span id="keyDisplay" class="key-text"></span>
-            <button onclick="copyKey()" id="copyBtn" style="background:#222; color:var(--accent); border:1px solid var(--accent); font-size: 12px;">Copy Key</button>
-            <button onclick="location.reload()" style="margin-top:10px; background:transparent; color:#555; font-size:10px; border:none;">Generate Again</button>
-        </div>
+        <button class="btn" id="copyBtn" onclick="copyKey()">
+            COPY TO CLIPBOARD
+        </button>
     </div>
 
-    <script>
-        // TEST MODE: Sab bypass logic delete kar diya hai Maharaj!
+    <div class="footer">UNKNOWN MODZ SECURITY SYSTEM</div>
+</div>
+
+<script>
+    window.onload = function() {
+        // --- AUTO KEY LOGIC (Synced with App) ---
+        // Maharaj, ye logic aur aapke Java App ka logic 100% same hona chahiye
+        const day = Math.floor(Date.now() / 86400000);
+        let seed = 2026 + day; // 2026 is our Secret Global Seed
         
-        function generateKey() {
-            const uidInput = document.getElementById('deviceIdInput').value;
-            const uid = uidInput.replace(/\D/g,''); // Sirf numbers lega
-            
-            if (uid.length < 4) {
-                alert("Maharaj, Device ID toh dalo! (Min 4 digits)");
-                return;
-            }
-
-            // --- MATH LOGIC SYNCED WITH JAVA ---
-            const day = Math.floor(Date.now() / 86400000);
-            let seed = parseInt(uid) + day;
-            
-            function rnd() { 
-                var x = Math.sin(seed++) * 10000; 
-                return Math.abs(x - Math.floor(x)); 
-            }
-            
-            let res = [];
-            for(let i=0; i<4; i++) {
-                let s = "";
-                for(int j=0; j<4; j++) s += Math.floor(rnd() * 10);
-                res.push(s);
-            }
-
-            const finalKey = "Unknown-Modz-" + res.join("-");
-            
-            // Result dikhao
-            document.getElementById('keyDisplay').innerText = finalKey;
-            document.getElementById('result').style.display = "block";
-            document.getElementById('formArea').style.display = "none";
+        function rnd() { 
+            var x = Math.sin(seed++) * 10000; 
+            return Math.abs(x - Math.floor(x)); 
+        }
+        
+        let segments = [];
+        for(let i=0; i<4; i++) {
+            let s = "";
+            for(let j=0; j<4; j++) s += Math.floor(rnd() * 10);
+            segments.push(s);
         }
 
-        function copyKey() {
-            const keyText = document.getElementById('keyDisplay').innerText;
+        const generatedKey = "UKM-" + segments.join("-");
+        document.getElementById('finalKey').innerText = generatedKey;
+    };
+
+    function copyKey() {
+        const keyText = document.getElementById('finalKey').innerText;
+        navigator.clipboard.writeText(keyText).then(() => {
             const btn = document.getElementById('copyBtn');
-            
-            navigator.clipboard.writeText(keyText).then(() => {
-                btn.innerText = "COPIED! ✅";
-                setTimeout(() => { btn.innerText = "Copy Key"; }, 2000);
-            });
-        }
-    </script>
+            btn.innerText = "COPIED SUCCESSFULLY! ✅";
+            btn.style.background = "#00ff88";
+            setTimeout(() => { 
+                btn.innerText = "COPY TO CLIPBOARD"; 
+                btn.style.background = "#ffffff";
+            }, 2000);
+        });
+    }
+</script>
+
 </body>
 </html>
