@@ -27,7 +27,6 @@
             margin-top: 50px;
         }
 
-        /* --- LOGO FIX (Upar aur Bada) --- */
         .key-icon { 
             background: #1a1a1a; 
             width: 85px; 
@@ -36,7 +35,7 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            margin: -45px auto 15px; /* Logo ko upar khichne ke liye */
+            margin: -45px auto 15px; 
             border: 1px solid #333; 
             overflow: hidden; 
             box-shadow: 0 0 25px rgba(0, 255, 136, 0.1);
@@ -58,7 +57,6 @@
         h1 { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
         .subtitle { color: #888; font-size: 14px; margin-bottom: 30px; }
 
-        /* Success Card */
         .card { 
             background: var(--card); 
             border: 1px solid #222; 
@@ -72,7 +70,6 @@
         h2 { font-size: 22px; margin-bottom: 12px; color: var(--accent); font-weight: 700; }
         .card-p { color: #999; font-size: 14px; line-height: 1.6; margin-bottom: 25px; }
 
-        /* Key Display Box */
         .key-box { 
             background: #000; 
             padding: 22px; 
@@ -91,7 +88,6 @@
             letter-spacing: 1px; 
         }
         
-        /* Copy Button */
         .btn { 
             width: 100%; 
             padding: 18px; 
@@ -112,7 +108,7 @@
         }
 
         .footer { 
-            margin-top: 60px; /* Pehle ye 30px thi, ise badha kar 60px ya 80px kar do */
+            margin-top: 80px; 
             color: #333; 
             font-size: 10px; 
             letter-spacing: 2px; 
@@ -129,14 +125,14 @@
     </div>
 
     <h1>Access Unlocked</h1>
-    <p class="subtitle">Your 24-hour license key is ready to use.</p>
+    <p class="subtitle">Your device-locked license key is ready.</p>
 
     <div class="card">
         <h2>Generation Success!</h2>
-        <p class="card-p">Copy the key below and paste it into the login dialog to continue.</p>
+        <p class="card-p">This key is locked to your IP. Share it, and it won't work for others.</p>
 
         <div class="key-box">
-            <span id="finalKey">GENERATING...</span>
+            <span id="finalKey">SECURE FETCHING...</span>
         </div>
 
         <button class="btn" id="copyBtn" onclick="copyKey()">
@@ -148,29 +144,48 @@
 </div>
 
 <script>
-    window.onload = function() {
-        // --- AUTO KEY LOGIC ---
-        const day = Math.floor(Date.now() / 86400000);
-        let seed = 2026 + day; 
-        
-        function rnd() { 
-            var x = Math.sin(seed++) * 10000; 
-            return Math.abs(x - Math.floor(x)); 
-        }
-        
-        let segments = [];
-        for(let i=0; i<4; i++) {
-            let s = "";
-            for(let j=0; j<4; j++) s += Math.floor(rnd() * 10);
-            segments.push(s);
-        }
+    async function generateLockedKey() {
+        try {
+            // 1. IP Fetching
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            const ip = data.ip;
 
-        const generatedKey = "UKM-" + segments.join("-");
-        document.getElementById('finalKey').innerText = generatedKey;
-    };
+            // 2. Logic: IP + Current Day + Secret Seed
+            const day = Math.floor(Date.now() / 86400000);
+            
+            // IP ke dot hatakar number banana
+            const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
+            let seed = ipSeed + day + 2026; 
+            
+            function rnd() { 
+                var x = Math.sin(seed++) * 10000; 
+                return Math.abs(x - Math.floor(x)); 
+            }
+            
+            let segments = [];
+            for(let i=0; i<4; i++) {
+                let s = "";
+                for(let j=0; j<4; j++) s += Math.floor(rnd() * 10);
+                segments.push(s);
+            }
+
+            const generatedKey = "UKM-" + segments.join("-");
+            document.getElementById('finalKey').innerText = generatedKey;
+
+        } catch (err) {
+            // Agar internet slow ho toh normal seed use karega fallback ke liye
+            const day = Math.floor(Date.now() / 86400000);
+            document.getElementById('finalKey').innerText = "CONNECT TO INTERNET";
+        }
+    }
+
+    window.onload = generateLockedKey;
 
     function copyKey() {
         const keyText = document.getElementById('finalKey').innerText;
+        if(keyText.includes("SECURE") || keyText.includes("CONNECT")) return;
+
         navigator.clipboard.writeText(keyText).then(() => {
             const btn = document.getElementById('copyBtn');
             btn.innerText = "COPIED SUCCESSFULLY! ✅";
