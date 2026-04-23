@@ -47,52 +47,56 @@
         </div>
     </div>
 
-    <script>
-        // --- Security Check ---
-        const REQUIRED_REF = "lootdest.org"; // Aapka shortener domain
-        const currentRef = document.referrer;
+  <script>
+    // --- Security Check (ABHI KE LIYE OFF HAI) ---
+    // const REQUIRED_REF = "lootdest.org"; 
+    // const currentRef = document.referrer;
 
-        window.onload = function() {
-            // Debug mode ke liye ?debug=true use kar sakte ho
-            if (currentRef.includes(REQUIRED_REF) || window.location.search.includes("debug=true")) {
-                document.getElementById('formArea').style.display = "block";
-            } else {
-                document.getElementById('errorArea').style.display = "block";
-            }
-        };
+    window.onload = function() {
+        // Abhi hum direct formArea dikhayenge, koi check nahi hoga
+        document.getElementById('formArea').style.display = "block";
+        document.getElementById('errorArea').style.display = "none";
+        
+        /* // JAB PURA BAN JAYE, TAB YE NICHE WALA CODE WAPAS ON KAR DENA
+        if (currentRef.includes(REQUIRED_REF) || window.location.search.includes("debug=true")) {
+            document.getElementById('formArea').style.display = "block";
+        } else {
+            document.getElementById('errorArea').style.display = "block";
+        }
+        */
+    };
 
-        function generateKey() {
-            const uid = document.getElementById('deviceIdInput').value.replace(/\D/g,'');
-            if (uid.length < 4) return alert("Invalid ID Maharaj!");
+    function generateKey() {
+        const uid = document.getElementById('deviceIdInput').value.replace(/\D/g,'');
+        if (uid.length < 4) return alert("Invalid ID Maharaj!");
 
-            // Mathematical Logic (Java App se Match karne ke liye)
-            const day = Math.floor(Date.now() / 86400000);
-            let seed = parseInt(uid) + day;
-            
-            function rnd() { 
-                var x = Math.sin(seed++) * 10000; 
-                return Math.abs(x - Math.floor(x)); 
-            }
-            
-            let res = [];
-            for(let i=0; i<4; i++) {
-                let s = "";
-                for(let j=0; j<4; j++) s += Math.floor(rnd() * 10);
-                res.push(s);
-            }
-
-            const finalKey = "Unknown-Modz-" + res.join("-");
-            document.getElementById('keyDisplay').innerText = finalKey;
-            document.getElementById('result').style.display = "block";
-            document.getElementById('formArea').style.display = "none";
+        const day = Math.floor(Date.now() / 86400000);
+        let seed = parseInt(uid) + day;
+        
+        function rnd() { 
+            var x = Math.sin(seed++) * 10000; 
+            return Math.abs(x - Math.floor(x)); 
+        }
+        
+        let res = [];
+        for(let i=0; i<4; i++) {
+            let s = "";
+            for(let j=0; j<4; j++) s += Math.floor(rnd() * 10);
+            res.push(s);
         }
 
-        function copyKey() {
-            const keyText = document.getElementById('keyDisplay').innerText;
-            navigator.clipboard.writeText(keyText);
-            document.getElementById('copyBtn').innerText = "COPIED! ✅";
-            setTimeout(() => { document.getElementById('copyBtn').innerText = "Copy Key"; }, 2000);
-        }
-    </script>
+        const finalKey = "Unknown-Modz-" + res.join("-");
+        document.getElementById('keyDisplay').innerText = finalKey;
+        document.getElementById('result').style.display = "block";
+        document.getElementById('formArea').style.display = "none";
+    }
+
+    function copyKey() {
+        const keyText = document.getElementById('keyDisplay').innerText;
+        navigator.clipboard.writeText(keyText);
+        document.getElementById('copyBtn').innerText = "COPIED! ✅";
+        setTimeout(() => { document.getElementById('copyBtn').innerText = "Copy Key"; }, 2000);
+    }
+</script>
 </body>
 </html>
