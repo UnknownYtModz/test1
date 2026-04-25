@@ -173,18 +173,24 @@
 
 <script>
     async function checkSecurity() {
-        const referrer = document.referrer;
-        
-        // --- BYPASS CHECK LOGIC ---
-        // 'lootdest.org' ya 'steps.html' se aane par hi key dikhayega
-        if (referrer.includes("sub2unlock.io") || referrer.includes("steps.html")) {
-            document.getElementById('mainContainer').style.display = "block";
-            generateLockedKey();
-        } else {
-            document.getElementById('mainContainer').style.display = "none";
-            document.getElementById('bypassContainer').style.display = "block";
-        }
+    const referrer = document.referrer;
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get('source');
+    
+    // Yahan aap Earnlinks aur baki sab allow kar sakte hain
+    if (
+        source === "official" || 
+        referrer.includes("earnlinks.io") || 
+        referrer.includes("lootdest.org") || 
+        referrer.includes("steps.html")
+    ) {
+        document.getElementById('mainContainer').style.display = "block";
+        generateLockedKey();
+    } else {
+        document.getElementById('mainContainer').style.display = "none";
+        document.getElementById('bypassContainer').style.display = "block";
     }
+}
 
     async function generateLockedKey() {
         try {
