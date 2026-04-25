@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Key Generated | Unknown Modz</title>
     <style>
-        :root { --bg: #000000; --card: #121212; --text: #ffffff; --accent: #00ff88; }
+        :root { --bg: #000000; --card: #121212; --text: #ffffff; --accent: #00ff88; --error: #ff4444; }
         
         body { 
             background-color: var(--bg); 
@@ -26,6 +26,21 @@
             text-align: center;
             margin-top: 50px;
         }
+
+        /* --- UI Visibility Controls --- */
+        #mainContainer { display: none; }
+        #bypassContainer { display: none; }
+
+        /* --- BYPASS ERROR CARD --- */
+        .error-card { 
+            background: #1a0a0a; 
+            border: 1px solid #441111; 
+            border-radius: 28px; 
+            padding: 40px 30px; 
+            box-shadow: 0 10px 40px rgba(255,0,0,0.1);
+        }
+        .error-icon { font-size: 50px; margin-bottom: 20px; }
+        .error-title { color: var(--error); font-size: 24px; font-weight: bold; margin-bottom: 15px; }
 
         .key-icon { 
             background: #1a1a1a; 
@@ -107,6 +122,8 @@
             box-shadow: 0 10px 20px rgba(0,255,136,0.2);
         }
 
+        .btn-red { background: var(--error); color: white; margin-top: 20px; }
+
         .footer { 
             margin-top: 80px; 
             color: #333; 
@@ -120,50 +137,69 @@
 <body>
 
 <div class="container">
-    <div class="key-icon">
-        <img src="./assets/logo.png" alt="UKM">
-    </div>
-
-    <h1>Access Unlocked</h1>
-    <p class="subtitle">Your device-locked license key is ready.</p>
-
-    <div class="card">
-        <h2>Generation Success!</h2>
-        <p class="card-p">This key is locked to your IP. Share it, and it won't work for others.</p>
-
-        <div class="key-box">
-            <span id="finalKey">SECURE FETCHING...</span>
+    <div id="mainContainer">
+        <div class="key-icon">
+            <img src="./assets/logo.png" alt="UKM">
         </div>
 
-        <button class="btn" id="copyBtn" onclick="copyKey()">
-            COPY TO CLIPBOARD
-        </button>
+        <h1>Access Unlocked</h1>
+        <p class="subtitle">Your device-locked license key is ready.</p>
+
+        <div class="card">
+            <h2>Generation Success!</h2>
+            <p class="card-p">This key is locked to your device. Share it, and it won't work for others.</p>
+
+            <div class="key-box">
+                <span id="finalKey">SECURE FETCHING...</span>
+            </div>
+
+            <button class="btn" id="copyBtn" onclick="copyKey()">
+                COPY TO CLIPBOARD
+            </button>
+        </div>
+    </div>
+
+    <div id="bypassContainer">
+        <div class="error-card">
+            <div class="error-icon">🚫</div>
+            <div class="error-title">Bypass Detected!</div>
+            <p style="color:#888; font-size: 14px; line-height: 1.5;">Direct access is prohibited. Please use the official link from the script to generate your key.</p>
+            <button class="btn btn-red" onclick="location.href='steps.html'">RETURN TO STEPS</button>
+        </div>
     </div>
 
     <div class="footer">UNKNOWN MODZ SECURITY SYSTEM</div>
 </div>
 
 <script>
+    async function checkSecurity() {
+        const referrer = document.referrer;
+        
+        // --- BYPASS CHECK LOGIC ---
+        // 'lootdest.org' ya 'steps.html' se aane par hi key dikhayega
+        if (referrer.includes("lootdest.org") || referrer.includes("steps.html")) {
+            document.getElementById('mainContainer').style.display = "block";
+            generateLockedKey();
+        } else {
+            document.getElementById('mainContainer').style.display = "none";
+            document.getElementById('bypassContainer').style.display = "block";
+        }
+    }
+
     async function generateLockedKey() {
         try {
-            // 1. IP Fetching
             const response = await fetch('https://api.ipify.org?format=json');
             const data = await response.json();
             const ip = data.ip;
 
-            // 2. DEVICE ID LOGIC (LocalStorage)
             let deviceUID = localStorage.getItem('ukm_device_id');
             if (!deviceUID) {
-                // Agar ID nahi hai toh nayi random ID banao aur save karo
                 deviceUID = Math.floor(Math.random() * 999999) + 100000;
                 localStorage.setItem('ukm_device_id', deviceUID);
             }
 
-            // 3. Logic: IP + Unique Device ID + Day + Secret Seed
             const day = Math.floor(Date.now() / 86400000);
             const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
-            
-            // Seed mein Device ID add kar diya (Ab ye har phone pe alag hoga)
             let seed = ipSeed + day + 2026 + parseInt(deviceUID); 
             
             function rnd() { 
@@ -186,7 +222,8 @@
         }
     }
 
-    window.onload = generateLockedKey;
+    // Page load par security check run karo
+    window.onload = checkSecurity;
 
     function copyKey() {
         const keyText = document.getElementById('finalKey').innerText;
