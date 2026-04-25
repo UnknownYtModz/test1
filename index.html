@@ -173,22 +173,34 @@
 
 <script>
     async function checkSecurity() {
-    const referrer = document.referrer;
     const urlParams = new URLSearchParams(window.location.search);
     const source = urlParams.get('source');
+    const referrer = document.referrer;
     
-    // Yahan aap Earnlinks aur baki sab allow kar sakte hain
-    if (
-        source === "official" || 
-        referrer.includes("earnlinks.io") || 
-        referrer.includes("lootdest.org") || 
-        referrer.includes("steps.html")
-    ) {
+    // --- 1. VALIDATION LOGIC ---
+    // Check kar raha hai ki source tag hai ya user sahi website se aaya hai
+    if (source === "official" || referrer.includes("earnlinks.io") || referrer.includes("lootdest.org") || referrer.includes("steps.html")) {
+        
+        // --- 2. URL CLEANING (The Magic) ---
+        // Ye line URL se '?source=official' ko turant delete kar degi
+        // Iske baad refresh karne par URL khali ho jayega aur access denied hoga
+        if (source === "official") {
+            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+
+        // Access allow karo
         document.getElementById('mainContainer').style.display = "block";
         generateLockedKey();
+        
     } else {
+        // --- 3. BYPASS PROTECTION ---
+        // Agar koi direct aane ki koshish karega
         document.getElementById('mainContainer').style.display = "none";
         document.getElementById('bypassContainer').style.display = "block";
+        
+        // Security ke liye key box ko empty kar do
+        document.getElementById('finalKey').innerText = "ACCESS DENIED";
     }
 }
 
