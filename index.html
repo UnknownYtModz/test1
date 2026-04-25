@@ -243,20 +243,31 @@
     // Page load par security check run karo
     window.onload = checkSecurity;
 
-    function saveKeyToSheet(userSerial, generatedKey) {
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbyEGS04p380OEE4e7K1pAE5YwUP8SQbrh08NNu1zIidOagkSsCT7mP_ixFjOqf2N5JBeg/exec"; // Jo screenshot mein hai wo yahan dalo
+   function saveKeyToSheet(userSerial, generatedKey) {
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbyEGS04p380OEE4e7K1pAE5YwUP8SQbrh08NNu1zIidOagkSsCT7mP_ixFjOqf2N5JBeg/exec"; // Apna Deployment URL dalo
 
+    // Data ko format karna
+    const params = new URLSearchParams();
+    params.append('action', 'save');
+    params.append('serial', userSerial);
+    params.append('key', generatedKey);
+
+    // Request bhejna
     fetch(webAppUrl, {
         method: 'POST',
-        mode: 'no-cors', // Google Apps Script ke liye zaroori hai
+        mode: 'no-cors', // Ye zaroori hai par data format sahi hona chahiye
+        cache: 'no-cache',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
         body: JSON.stringify({
             action: 'save',
             serial: userSerial,
             key: generatedKey
         })
-    }).then(() => {
-        console.log("Key Saved to Google Sheet!");
-    });
+    })
+    .then(() => console.log("Done! Check your sheet now."))
+    .catch(err => console.error("Error:", err));
 }
 
     function copyKey() {
