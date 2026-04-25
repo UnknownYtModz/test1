@@ -243,6 +243,22 @@
     // Page load par security check run karo
     window.onload = checkSecurity;
 
+    function saveKeyToSheet(userSerial, generatedKey) {
+    const webAppUrl = "APNA_WEB_APP_URL_YAHAN_PASTE_KARO"; // Jo screenshot mein hai wo yahan dalo
+
+    fetch(webAppUrl, {
+        method: 'POST',
+        mode: 'no-cors', // Google Apps Script ke liye zaroori hai
+        body: JSON.stringify({
+            action: 'save',
+            serial: userSerial,
+            key: generatedKey
+        })
+    }).then(() => {
+        console.log("Key Saved to Google Sheet!");
+    });
+}
+
     function copyKey() {
         const keyText = document.getElementById('finalKey').innerText;
         if(keyText.includes("SECURE") || keyText.includes("CONNECT")) return;
