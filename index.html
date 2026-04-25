@@ -173,36 +173,23 @@
 
 <script>
     async function checkSecurity() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const source = urlParams.get('source');
-    const referrer = document.referrer;
-    
-    // --- 1. VALIDATION LOGIC ---
-    // Check kar raha hai ki source tag hai ya user sahi website se aaya hai
-    if (source === "official" || referrer.includes("earnlinks.io") || referrer.includes("lootdest.org") || referrer.includes("steps.html")) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const source = urlParams.get('source');
+        const referrer = document.referrer;
         
-        // --- 2. URL CLEANING (The Magic) ---
-        // Ye line URL se '?source=official' ko turant delete kar degi
-        // Iske baad refresh karne par URL khali ho jayega aur access denied hoga
-        if (source === "official") {
-            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            window.history.replaceState({}, document.title, cleanUrl);
+        if (source === "official" || referrer.includes("earnlinks.io") || referrer.includes("lootdest.org") || referrer.includes("steps.html")) {
+            if (source === "official") {
+                const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+            document.getElementById('mainContainer').style.display = "block";
+            generateLockedKey(); // Key generate karo aur save bhi
+        } else {
+            document.getElementById('mainContainer').style.display = "none";
+            document.getElementById('bypassContainer').style.display = "block";
+            document.getElementById('finalKey').innerText = "ACCESS DENIED";
         }
-
-        // Access allow karo
-        document.getElementById('mainContainer').style.display = "block";
-        generateLockedKey();
-        
-    } else {
-        // --- 3. BYPASS PROTECTION ---
-        // Agar koi direct aane ki koshish karega
-        document.getElementById('mainContainer').style.display = "none";
-        document.getElementById('bypassContainer').style.display = "block";
-        
-        // Security ke liye key box ko empty kar do
-        document.getElementById('finalKey').innerText = "ACCESS DENIED";
     }
-}
 
     async function generateLockedKey() {
         try {
@@ -210,15 +197,17 @@
             const data = await response.json();
             const ip = data.ip;
 
+            // --- SERIAL LOGIC ---
+            // Website par ek temporary ID banate hain taaki ye Sheet mein save ho sake
             let deviceUID = localStorage.getItem('ukm_device_id');
             if (!deviceUID) {
-                deviceUID = Math.floor(Math.random() * 999999) + 100000;
+                deviceUID = "WEB-" + Math.floor(Math.random() * 999999);
                 localStorage.setItem('ukm_device_id', deviceUID);
             }
 
             const day = Math.floor(Date.now() / 86400000);
             const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
-            let seed = ipSeed + day + 2026 + parseInt(deviceUID); 
+            let seed = ipSeed + day + 2026; 
             
             function rnd() { 
                 var x = Math.sin(seed++) * 10000; 
@@ -235,40 +224,26 @@
             const generatedKey = "UKM-" + segments.join("-");
             document.getElementById('finalKey').innerText = generatedKey;
 
+            // 🔥 SABSE ZAROORI: Ab yahan se Sheet mein bhej rahe hain
+            saveKeyToSheet(deviceUID, generatedKey);
+
         } catch (err) {
             document.getElementById('finalKey').innerText = "CONNECT TO INTERNET";
         }
     }
 
-    // Page load par security check run karo
-    window.onload = checkSecurity;
+    // Google Sheet me save karne wala function
+    function saveKeyToSheet(userSerial, generatedKey) {
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbyEGS04p380OEE4e7K1pAE5YwUP8SQbrh08NNu1zIidOagkSsCT7mP_ixFjOqf2N5JBeg/exec";
 
-   function saveKeyToSheet(userSerial, generatedKey) {
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbyEGS04p380OEE4e7K1pAE5YwUP8SQbrh08NNu1zIidOagkSsCT7mP_ixFjOqf2N5JBeg/exec"; // Apna Deployment URL dalo
-
-    // Data ko format karna
-    const params = new URLSearchParams();
-    params.append('action', 'save');
-    params.append('serial', userSerial);
-    params.append('key', generatedKey);
-
-    // Request bhejna
-    fetch(webAppUrl, {
-        method: 'POST',
-        mode: 'no-cors', // Ye zaroori hai par data format sahi hona chahiye
-        cache: 'no-cache',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: JSON.stringify({
-            action: 'save',
-            serial: userSerial,
-            key: generatedKey
+        // URLSearchParams method sabse safe hai CORS ke liye
+        fetch(webAppUrl + "?action=save&serial=" + encodeURIComponent(userSerial) + "&key=" + encodeURIComponent(generatedKey), {
+            method: 'GET', // GET method hamesha work karta hai bina error ke
+            mode: 'no-cors'
         })
-    })
-    .then(() => console.log("Done! Check your sheet now."))
-    .catch(err => console.error("Error:", err));
-}
+        .then(() => console.log("Key Sent to Sheet!"))
+        .catch(err => console.error("Cloud Error:", err));
+    }
 
     function copyKey() {
         const keyText = document.getElementById('finalKey').innerText;
@@ -284,6 +259,8 @@
             }, 2000);
         });
     }
+
+    window.onload = checkSecurity;
 </script>
 </body>
 </html>
