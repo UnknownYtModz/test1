@@ -192,58 +192,43 @@
     }
 
     async function generateLockedKey() {
-        try {
-            const response = await fetch('https://api.ipify.org?format=json');
-            const data = await response.json();
-            const ip = data.ip;
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        const ip = data.ip;
 
-            // --- SERIAL LOGIC ---
-            // Website par ek temporary ID banate hain taaki ye Sheet mein save ho sake
-            let deviceUID = localStorage.getItem('ukm_device_id');
-            if (!deviceUID) {
-                deviceUID = "WEB-" + Math.floor(Math.random() * 999999);
-                localStorage.setItem('ukm_device_id', deviceUID);
-            }
-
-            const day = Math.floor(Date.now() / 86400000);
-            const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
-            let seed = ipSeed + day + 2026; 
-            
-            function rnd() { 
-                var x = Math.sin(seed++) * 10000; 
-                return Math.abs(x - Math.floor(x)); 
-            }
-            
-            let segments = [];
-            for(let i=0; i<4; i++) {
-                let s = "";
-                for(let j=0; j<4; j++) s += Math.floor(rnd() * 10);
-                segments.push(s);
-            }
-
-            const generatedKey = "UKM-" + segments.join("-");
-            document.getElementById('finalKey').innerText = generatedKey;
-
-            // 🔥 SABSE ZAROORI: Ab yahan se Sheet mein bhej rahe hain
-            saveKeyToSheet(deviceUID, generatedKey);
-
-        } catch (err) {
-            document.getElementById('finalKey').innerText = "CONNECT TO INTERNET";
+        // Aaj ki Date (Daily expiry ke liye)
+        const day = Math.floor(Date.now() / 86400000);
+        const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
+        
+        // Seed: IP + Date + Year (Ye App se match hona chahiye)
+        let seed = ipSeed + day + 2026; 
+        
+        function rnd() { 
+            var x = Math.sin(seed++) * 10000; 
+            return Math.abs(x - Math.floor(x)); 
         }
-    }
+        
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // I, O, 0, 1 hata diye confusion rokne ke liye
+        let segments = [];
+        for(let i=0; i<4; i++) {
+            let s = "";
+            for(let j=0; j<4; j++) {
+                let r = Math.floor(rnd() * chars.length);
+                s += chars.charAt(r);
+            }
+            segments.push(s);
+        }
 
-    // Google Sheet me save karne wala function
-    function saveKeyToSheet(userSerial, generatedKey) {
-        const webAppUrl = "https://script.google.com/macros/s/AKfycbyEGS04p380OEE4e7K1pAE5YwUP8SQbrh08NNu1zIidOagkSsCT7mP_ixFjOqf2N5JBeg/exec";
+        const finalKey = "UKM-" + segments.join("-");
+        document.getElementById('finalKey').innerText = finalKey;
 
-        // URLSearchParams method sabse safe hai CORS ke liye
-        fetch(webAppUrl + "?action=save&serial=" + encodeURIComponent(userSerial) + "&key=" + encodeURIComponent(generatedKey), {
-            method: 'GET', // GET method hamesha work karta hai bina error ke
-            mode: 'no-cors'
-        })
-        .then(() => console.log("Key Sent to Sheet!"))
-        .catch(err => console.error("Cloud Error:", err));
+    } catch (err) {
+        document.getElementById('finalKey').innerText = "CONNECT TO INTERNET";
     }
+}
+
+
 
     function copyKey() {
         const keyText = document.getElementById('finalKey').innerText;
